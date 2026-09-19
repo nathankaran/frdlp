@@ -70,15 +70,19 @@ pytest
 ## Usage
 
 ```text
-frdlp DESTINATION URL FILETYPE
+frdlp DESTINATION URL [FILETYPE] [-audio CODEC]
 ```
 
-`FILETYPE` is case-insensitive and accepts:
+`FILETYPE` is case-insensitive and defaults to `aac`. Use `-audio CODEC` (or
+`--audio CODEC`) at the end of the command to select a different audio codec;
+for example, `frdlp ~/Downloads URL -audio opus`.
+
+`FILETYPE` and `CODEC` accept:
 
 - `best` — best video and audio, preserving yt-dlp's selected container
 - `audio` — best audio stream in its native format
 - `mp4`, `webm`, `mkv`, `mov` — best source converted or remuxed to that type
-- `mp3`, `m4a`, `wav`, `flac`, `opus` — best audio converted to that type
+- `aac`, `mp3`, `m4a`, `wav`, `flac`, `opus` — best audio converted to that type
 
 Explicit extensions are guaranteed through FFmpeg conversion when necessary.
 Completed files follow yt-dlp's normal no-overwrite behavior, while partial

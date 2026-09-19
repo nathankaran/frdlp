@@ -12,6 +12,7 @@ from frdlp.presets import FormatPreset
 
 
 ENCODERS_BY_PRESET: dict[str, frozenset[str]] = {
+    "aac": frozenset({"aac", "libfdk_aac"}),
     "mp3": frozenset({"libmp3lame"}),
     "m4a": frozenset({"aac", "libfdk_aac"}),
     "wav": frozenset({"pcm_s16le"}),

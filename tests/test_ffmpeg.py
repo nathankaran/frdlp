@@ -47,6 +47,7 @@ def test_validate_ffmpeg_reports_missing_requested_encoder(
 @pytest.mark.parametrize(
     ("preset", "encoders"),
     [
+        ("aac", "aac"),
         ("m4a", "aac"),
         ("m4a", "libfdk_aac"),
         ("wav", "pcm_s16le"),

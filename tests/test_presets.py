@@ -11,6 +11,7 @@ def test_all_documented_presets_exist() -> None:
         "webm",
         "mkv",
         "mov",
+        "aac",
         "mp3",
         "m4a",
         "wav",
@@ -40,4 +41,3 @@ def test_audio_preset_guarantees_requested_codec() -> None:
 def test_unknown_preset_has_useful_error() -> None:
     with pytest.raises(ValueError, match="unsupported filetype"):
         parse_preset("avi")
-

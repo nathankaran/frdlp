@@ -13,10 +13,27 @@ def test_parser_accepts_requested_interface() -> None:
     assert args.filetype is PRESETS["mp3"]
 
 
+def test_parser_defaults_to_aac_and_allows_a_trailing_audio_override() -> None:
+    args = build_parser().parse_args(
+        ["downloads", "https://example.test/v", "-audio", "opus"]
+    )
+
+    assert args.filetype is PRESETS["aac"]
+    assert args.audio_codec is PRESETS["opus"]
+
+
 def test_parser_rejects_extra_options() -> None:
     with pytest.raises(SystemExit) as error:
         build_parser().parse_args(
             ["downloads", "https://example.test/v", "mp4", "--cookies", "x"]
+        )
+    assert error.value.code == 2
+
+
+def test_parser_rejects_video_formats_as_audio_codecs() -> None:
+    with pytest.raises(SystemExit) as error:
+        build_parser().parse_args(
+            ["downloads", "https://example.test/v", "-audio", "mp4"]
         )
     assert error.value.code == 2
 

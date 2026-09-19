@@ -48,12 +48,15 @@ def _audio(name: str) -> FormatPreset:
     )
 
 
+AUDIO_CODECS = ("aac", "mp3", "m4a", "wav", "flac", "opus")
+
+
 PRESETS: Mapping[str, FormatPreset] = MappingProxyType(
     {
         "best": FormatPreset("best", "bv*+ba/b"),
         "audio": FormatPreset("audio", "ba/b"),
         **{name: _video(name) for name in ("mp4", "webm", "mkv", "mov")},
-        **{name: _audio(name) for name in ("mp3", "m4a", "wav", "flac", "opus")},
+        **{name: _audio(name) for name in AUDIO_CODECS},
     }
 )
 
@@ -65,4 +68,3 @@ def parse_preset(value: str) -> FormatPreset:
     except KeyError as error:
         choices = ", ".join(PRESETS)
         raise ValueError(f"unsupported filetype {value!r}; choose one of: {choices}") from error
-

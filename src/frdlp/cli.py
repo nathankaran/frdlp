@@ -10,7 +10,7 @@ from collections.abc import Sequence
 
 from frdlp import __version__
 from frdlp.ffmpeg import validate_ffmpeg
-from frdlp.presets import FormatPreset, PRESETS, parse_preset
+from frdlp.presets import AUDIO_CODECS, FormatPreset, PRESETS, parse_preset
 
 
 def _preset_argument(value: str) -> FormatPreset:
@@ -18,6 +18,16 @@ def _preset_argument(value: str) -> FormatPreset:
         return parse_preset(value)
     except ValueError as error:
         raise argparse.ArgumentTypeError(str(error)) from error
+
+
+def _audio_codec_argument(value: str) -> FormatPreset:
+    preset = _preset_argument(value)
+    if preset.name not in AUDIO_CODECS:
+        choices = ", ".join(AUDIO_CODECS)
+        raise argparse.ArgumentTypeError(
+            f"unsupported audio codec {value!r}; choose one of: {choices}"
+        )
+    return preset
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -28,7 +38,22 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("destination", help="directory in which downloads are saved")
     parser.add_argument("url", help="video or playlist URL understood by yt-dlp")
-    parser.add_argument("filetype", type=_preset_argument, metavar="FILETYPE")
+    parser.add_argument(
+        "filetype",
+        type=_preset_argument,
+        metavar="FILETYPE",
+        nargs="?",
+        default=PRESETS["aac"],
+        help="output type (default: aac)",
+    )
+    parser.add_argument(
+        "-audio",
+        "--audio",
+        dest="audio_codec",
+        type=_audio_codec_argument,
+        metavar="CODEC",
+        help="extract audio using CODEC instead of FILETYPE",
+    )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return parser
 
@@ -64,7 +89,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"frdlp: error: {error}", file=sys.stderr)
         return 2
 
-    ffmpeg_problem = validate_ffmpeg(args.filetype)
+    filetype = args.audio_codec or args.filetype
+
+    ffmpeg_problem = validate_ffmpeg(filetype)
     if ffmpeg_problem:
         print(f"frdlp: error: {ffmpeg_problem}", file=sys.stderr)
         return 2
@@ -82,7 +109,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"frdlp: error: unable to load the terminal UI: {error}", file=sys.stderr)
         return 2
 
-    result = DownloadApp(destination, args.url, args.filetype).run()
+    result = DownloadApp(destination, args.url, filetype).run()
     return int(result) if result is not None else 1
 
 
