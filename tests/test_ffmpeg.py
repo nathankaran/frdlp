@@ -68,11 +68,21 @@ def test_validate_ffmpeg_supports_each_audio_preset(
     assert ffmpeg.validate_ffmpeg(PRESETS[preset]) is None
 
 
-def test_validate_ffmpeg_skips_native_and_video_presets(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_validate_ffmpeg_skips_native_preset(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(ffmpeg.shutil, "which", lambda executable: f"/usr/bin/{executable}")
     monkeypatch.setattr(ffmpeg.subprocess, "run", lambda *args, **kwargs: pytest.fail("ran"))
 
     assert ffmpeg.validate_ffmpeg(PRESETS["best"]) is None
+
+
+def test_validate_ffmpeg_requires_aac_for_video_presets(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(ffmpeg.shutil, "which", lambda executable: f"/usr/bin/{executable}")
+    monkeypatch.setattr(
+        ffmpeg.subprocess,
+        "run",
+        lambda *args, **kwargs: CompletedProcess(args[0], 0, " A....D aac\n", ""),
+    )
+
     assert ffmpeg.validate_ffmpeg(PRESETS["webm"]) is None
 
 

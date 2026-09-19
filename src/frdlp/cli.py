@@ -10,7 +10,7 @@ from collections.abc import Sequence
 
 from frdlp import __version__
 from frdlp.ffmpeg import validate_ffmpeg
-from frdlp.presets import AUDIO_CODECS, FormatPreset, PRESETS, parse_preset
+from frdlp.presets import AUDIO_CODECS, FormatPreset, PRESETS, parse_preset, with_audio_codec
 
 
 def _preset_argument(value: str) -> FormatPreset:
@@ -89,7 +89,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"frdlp: error: {error}", file=sys.stderr)
         return 2
 
-    filetype = args.audio_codec or args.filetype
+    filetype = (
+        with_audio_codec(args.filetype, args.audio_codec)
+        if args.audio_codec
+        else args.filetype
+    )
 
     ffmpeg_problem = validate_ffmpeg(filetype)
     if ffmpeg_problem:

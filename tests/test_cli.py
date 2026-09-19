@@ -38,6 +38,15 @@ def test_parser_rejects_video_formats_as_audio_codecs() -> None:
     assert error.value.code == 2
 
 
+def test_audio_override_preserves_video_filetype() -> None:
+    args = build_parser().parse_args(
+        ["downloads", "https://example.test/v", "mp4", "-audio", "opus"]
+    )
+
+    assert args.filetype is PRESETS["mp4"]
+    assert args.audio_codec is PRESETS["opus"]
+
+
 def test_prepare_destination_creates_and_resolves_path(tmp_path: Path) -> None:
     destination = prepare_destination(str(tmp_path / "new" / "downloads"))
     assert destination.is_dir()

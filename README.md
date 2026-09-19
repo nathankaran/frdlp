@@ -73,9 +73,9 @@ pytest
 frdlp DESTINATION URL [FILETYPE] [-audio CODEC]
 ```
 
-`FILETYPE` is case-insensitive and defaults to `aac`. Use `-audio CODEC` (or
-`--audio CODEC`) at the end of the command to select a different audio codec;
-for example, `frdlp ~/Downloads URL -audio opus`.
+`FILETYPE` is case-insensitive and defaults to `aac`. Video formats use AAC
+audio by default; use `-audio CODEC` (or `--audio CODEC`) at the end to choose
+a different codec, for example `frdlp ~/Downloads URL mp4 -audio opus`.
 
 `FILETYPE` and `CODEC` accept:
 

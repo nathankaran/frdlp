@@ -1,6 +1,6 @@
 import pytest
 
-from frdlp.presets import PRESETS, parse_preset
+from frdlp.presets import PRESETS, parse_preset, with_audio_codec
 
 
 def test_all_documented_presets_exist() -> None:
@@ -30,6 +30,14 @@ def test_video_preset_guarantees_requested_format() -> None:
     assert options["postprocessors"] == [
         {"key": "FFmpegVideoConvertor", "preferedformat": "webm"}
     ]
+    assert options["postprocessor_args"] == {"merger+ffmpeg_o": ["-c:a", "aac"]}
+
+
+def test_audio_override_preserves_video_format() -> None:
+    options = with_audio_codec(PRESETS["mp4"], PRESETS["opus"]).ydl_options()
+
+    assert options["merge_output_format"] == "mp4"
+    assert options["postprocessor_args"] == {"merger+ffmpeg_o": ["-c:a", "opus"]}
 
 
 def test_audio_preset_guarantees_requested_codec() -> None:

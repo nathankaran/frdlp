@@ -34,7 +34,8 @@ def validate_ffmpeg(preset: FormatPreset) -> str | None:
         verb = "is" if len(missing) == 1 else "are"
         return _problem_message(f"{names} {verb} not available on PATH.", preset.name)
 
-    required = ENCODERS_BY_PRESET.get(preset.name)
+    codec = preset.audio_codec or preset.name
+    required = ENCODERS_BY_PRESET.get(codec)
     if not required:
         return None
 
@@ -48,11 +49,11 @@ def validate_ffmpeg(preset: FormatPreset) -> str | None:
             check=False,
         )
     except (OSError, subprocess.SubprocessError) as error:
-        return _problem_message(f"could not inspect FFmpeg encoders: {error}", preset.name)
+        return _problem_message(f"could not inspect FFmpeg encoders: {error}", codec)
 
     if result.returncode:
         detail = result.stderr.strip().splitlines()[-1] if result.stderr.strip() else "unknown error"
-        return _problem_message(f"could not inspect FFmpeg encoders: {detail}", preset.name)
+        return _problem_message(f"could not inspect FFmpeg encoders: {detail}", codec)
 
     available = set(_ENCODER_LINE.findall(result.stdout))
     if available.intersection(required):
@@ -60,8 +61,8 @@ def validate_ffmpeg(preset: FormatPreset) -> str | None:
 
     wanted = " or ".join(sorted(required))
     return _problem_message(
-        f"FFmpeg cannot encode {preset.name.upper()} (missing encoder: {wanted}).",
-        preset.name,
+        f"FFmpeg cannot encode {codec.upper()} (missing encoder: {wanted}).",
+        codec,
     )
 
 
