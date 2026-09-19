@@ -38,7 +38,7 @@ def test_non_interactive_terminal_returns_usage_error(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     monkeypatch.setattr("frdlp.cli.terminal_is_interactive", lambda: False)
-    monkeypatch.setattr("frdlp.cli.shutil.which", lambda executable: f"/bin/{executable}")
+    monkeypatch.setattr("frdlp.cli.validate_ffmpeg", lambda preset: None)
     result = main([str(tmp_path), "https://example.test/v", "best"])
     assert result == 2
     assert "interactive terminal is required" in capsys.readouterr().err
@@ -47,8 +47,7 @@ def test_non_interactive_terminal_returns_usage_error(
 def test_missing_ffmpeg_returns_preflight_error(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    monkeypatch.setattr("frdlp.cli.shutil.which", lambda executable: None)
+    monkeypatch.setattr("frdlp.cli.validate_ffmpeg", lambda preset: "ffmpeg is not available")
     result = main([str(tmp_path), "https://example.test/v", "best"])
     assert result == 2
-    assert "FFmpeg and ffprobe" in capsys.readouterr().err
-
+    assert "ffmpeg is not available" in capsys.readouterr().err

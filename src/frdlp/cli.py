@@ -5,11 +5,11 @@ from __future__ import annotations
 import argparse
 import os
 from pathlib import Path
-import shutil
 import sys
 from collections.abc import Sequence
 
 from frdlp import __version__
+from frdlp.ffmpeg import validate_ffmpeg
 from frdlp.presets import FormatPreset, PRESETS, parse_preset
 
 
@@ -64,11 +64,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"frdlp: error: {error}", file=sys.stderr)
         return 2
 
-    if shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None:
-        print(
-            "frdlp: error: FFmpeg and ffprobe must be installed and available on PATH.",
-            file=sys.stderr,
-        )
+    ffmpeg_problem = validate_ffmpeg(args.filetype)
+    if ffmpeg_problem:
+        print(f"frdlp: error: {ffmpeg_problem}", file=sys.stderr)
         return 2
 
     if not terminal_is_interactive():

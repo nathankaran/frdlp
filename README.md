@@ -18,6 +18,12 @@ directory named after the playlist (falling back to its ID).
 - [FFmpeg](https://ffmpeg.org/) available on `PATH`
 - An interactive terminal
 
+Before starting a download, frdlp checks that FFmpeg and ffprobe are available.
+For an explicit audio format it also checks the needed encoder (for example,
+`libmp3lame` for MP3). If a dependency is missing, frdlp exits before downloading
+and prints a manual installation or rebuild command for common package managers.
+On Gentoo, MP3 conversion requires enabling FFmpeg's `lame` USE flag.
+
 ## Quick install
 
 The installer checks for Python and FFmpeg, creates an isolated environment in
