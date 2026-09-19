@@ -18,15 +18,37 @@ directory named after the playlist (falling back to its ID).
 - [FFmpeg](https://ffmpeg.org/) available on `PATH`
 - An interactive terminal
 
-## Install
+## Quick install
 
-From this directory, the recommended installation is:
+The installer checks for Python and FFmpeg, creates an isolated environment in
+your user account, and installs or upgrades `frdlp` from this GitHub repository.
+It does not require `pipx` or administrator access.
+
+### Linux and macOS
 
 ```console
-pipx install .
+curl -fsSL https://raw.githubusercontent.com/nathankaran/yt-dlp_frontend/main/install.sh | sh
 ```
 
-You can also install it in an active virtual environment:
+The command is linked into `~/.local/bin`. If that directory is not already on
+`PATH`, the installer prints the one-line command needed to add it.
+
+### Windows PowerShell
+
+```powershell
+irm https://raw.githubusercontent.com/nathankaran/yt-dlp_frontend/main/install.ps1 | iex
+```
+
+The PowerShell installer adds its command directory to your user `PATH`; open a
+new terminal afterward.
+
+Both commands install the current `main` branch and can be rerun to upgrade.
+To inspect an installer before running it, open [install.sh](install.sh) or
+[install.ps1](install.ps1).
+
+### Local or development install
+
+From a local checkout, you can still install into an active virtual environment:
 
 ```console
 python -m pip install .
@@ -59,5 +81,3 @@ Ctrl+C and confirm to cancel. On completion, press Enter or `q` to exit.
 
 Advanced yt-dlp flags, cookies, authentication, subtitles, and metadata or
 thumbnail embedding are intentionally outside the first release.
-
-# yt-dlp_frontend
